@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.food.mapper.FoodMapper">
+
+
+	<resultMap id="findPic" type="com.food.entiy.Food">
+		<result column="item_no" property="itemNo" />
+		<result column="sell_price" property="sellPrice" />
+		<result column="name" property="name" />
+		<result column="pic" property="pic" />
+	</resultMap>
+
+	<select id="findPic" resultType="com.food.entiy.Food">
+		select
+		name,sell_price,pic,item_no
+		from food_detail
+	</select>
+
+
+	<insert id="createOrder">
+
+		insert into food_orders(order_no,table_no,status)
+		values(#{ord_no},#{table_no},0)
+
+	</insert>
+
+	<insert id="createOrderItems">
+
+		insert into
+		food_order_items(store_no,order_no,sell_price,item_no,amount,qty)
+		values(#{store_no},#{ord_no},#{sell_price},#{item_no},#{amount},#{count})
+	</insert>
+
+	<resultMap id="getOrderList" type="com.food.entiy.Orders">
+		<result column="store_no" property="storeNo" />
+		<result column="order_no" property="orderNo" />
+		<result column="table_no" property="tableNo" />
+		<result column="status" property="status" />
+		<result column="create_time" property="createTime" />
+	</resultMap>
+
+	<select id="getOrderList" resultType="com.food.entiy.Orders">
+		select store_no,
+		order_no,
+		table_no,
+		case when status = 0
+		then '未结账'
+		else
+		'已结账' end as status,
+		create_time
+		from food_orders
+		where store_no = #{storeNo}
+		and
+		date_format(create_time,'%Y-%m-%d') between #{beginDate} and
+		#{endDate}
+		limit #{page},#{limit}
+	</select>
+
+	<select id="getOrderListCount" resultType="java.lang.Integer">
+		select count(*)
+		from
+		food_orders
+		where store_no = #{storeNo}
+		and
+		date_format(create_time,'%Y-%m-%d') between #{beginDate} and
+		#{endDate}
+	</select>
+
+	<resultMap id="getOrderDetailList"
+		type="com.food.entiy.OrderItems">
+		<result column="store_no" property="storeNo" />
+		<result column="order_no" property="orderNo" />
+		<result column="sell_price" property="sellPrice" />
+		<result column="item_no" property="itemNo" />
+		<result column="amount" property="amount" />
+		<result column="qty" property="qty" />
+	</resultMap>
+
+	<select id="getOrderDetailList"
+		resultType="com.food.entiy.OrderItems">
+		select store_no,
+		order_no,
+		sell_price,
+		item_no,
+		amount,
+		qty
+		from
+		food_order_items
+		where store_no = #{storeNo}
+		and order_no = #{orderNo}
+	</select>
+
+	<resultMap id="showTableStatus" type="com.food.entiy.Table">
+		<result column="store_no" property="storeNo" />
+		<result column="status" property="status" />
+		<result column="table_no" property="tableNo" />
+	</resultMap>
+
+	<select id="showTableStatus" resultType="com.food.entiy.Table">
+		select store_no,
+		status,
+		table_no
+		from
+		food_table
+		where store_no = #{storeNo}
+	</select>
+
+</mapper>
