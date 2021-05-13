@@ -19,6 +19,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.food.entiy.Food;
 import com.food.entiy.OrderItems;
 import com.food.entiy.Orders;
+import com.food.entiy.ResponeBody;
 import com.food.entiy.Table;
 import com.food.service.FoodService;
 
@@ -40,19 +41,24 @@ public class FoodController {
 		return "test";
 	}
 
-	@RequestMapping(value = "foodList",method = RequestMethod.GET)
-	public String foodList(HttpServletRequest request) {
+	@RequestMapping(value = "foodList",method = RequestMethod.POST)
+	public ResponeBody<JSONObject> foodList(HttpServletRequest request,@RequestBody JSONObject data) {
+		ResponeBody<JSONObject> responeBody = new ResponeBody<JSONObject>();
+		JSONObject json = new JSONObject();
 		List<Food> pic = this.foodService.findPic();
-		System.out.println(pic);
 		request.setAttribute("img", pic);
 		String storeNo = request.getParameter("storeNo");
 		String tableNo = request.getParameter("tableNo");
-		logger.info(storeNo);
-		logger.info(tableNo);
+		//logger.info(storeNo);
+		//logger.info(tableNo);
 		List<Table> table = this.foodService.showTableStatus(storeNo);
+		System.out.println(table.toString());
+		json.put("data", table);
+		responeBody.setBody(json);
 		request.setAttribute("tableNo", request.getParameter("tableNo"));
 		request.setAttribute("table", table);
-		return "foodList";
+		System.out.println(responeBody);
+		return responeBody;
 	}
 	
 	@RequestMapping("createOrder")

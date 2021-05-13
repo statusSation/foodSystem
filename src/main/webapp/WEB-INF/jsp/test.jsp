@@ -61,7 +61,7 @@
 						href="javascript:;">所有商品</a>
 						<dl class="layui-nav-child">
 							<dd>
-								<a id="b1" href="javascript:;" onclick="changeFrame(this.id)">列表一</a>
+								<a id="b1" href="javascript:;" onclick="changeFrame(this.id)">点餐桌</a>
 							</dd>
 							<dd>
 								<a id="addFood" href="javascript:;" onclick="changeFrame(this.id)">新增菜品</a>

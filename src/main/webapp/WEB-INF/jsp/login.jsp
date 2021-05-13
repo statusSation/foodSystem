@@ -45,8 +45,8 @@
 								dataType : 'json',
 								data: JSON.stringify(data),
 								success : function(result) {
-									console.log(result);
-									if (result == 1) {
+									//console.log(result);
+									if (result.code == 0) {
 										layer.msg("登录成功");
 										window.location.href = "main";
 									} else {

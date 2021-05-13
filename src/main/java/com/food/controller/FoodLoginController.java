@@ -1,5 +1,7 @@
 package com.food.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,18 +39,23 @@ public class FoodLoginController {
 
 	@RequestMapping(value = "/loginUsr", method = { RequestMethod.POST })
 	@ResponseBody
-	public ResponeBody<User> loginUsr(@RequestBody JSONObject data) {
+	public ResponeBody<User> loginUsr(HttpServletRequest request,@RequestBody JSONObject data) {
 		ResponeBody<User> responeBody = new ResponeBody<User>();
 		String storeNo = data.getString("storeNo");
 		String usrId = data.getString("usrId");
 		String password = data.getString("password");
-		//request.getSession().setAttribute("usrId", usrId);
 		String flag = this.foodLoginService.getUsr(storeNo, usrId, password);
 		if ("1".equals(flag)) {
+			responeBody.setMsg("登录成功");
 			logger.info("登录成功");
-			//request.getSession().setAttribute("storeNo", storeNo);
+			request.getSession().setAttribute("usrId", usrId);
+			request.getSession().setAttribute("storeNo", storeNo);
+		}else {
+			responeBody.setCode(109);
+			responeBody.setMsg("登录失败");
+			logger.info("登录失败");
+			return responeBody;
 		}
-		responeBody.setBody(null);
 		return responeBody;
 	}
 }
