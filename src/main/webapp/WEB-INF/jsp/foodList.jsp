@@ -20,7 +20,7 @@
 				<div
 					style="float: left; margin-left: 60px; text-align: center; margin-top: 10px;">
 					<img alt="" src="${item.pic}" width="150px" height="100px"><br>
-					<label>${item.name }</label><br> <label id="price${i.index }">${item.sellPrice }</label><label>元</label><br>
+					<label>${item.name }</label><br> <label id="price${i.index }">${item.sellPrice }</label><label>元${item.itemNo }</label><br>
 					<button type="button"
 						class="layui-btn layui-btn-sm layui-btn-primary"
 						id="add${item.itemNo }" name="add${item.itemNo }"
@@ -51,7 +51,7 @@
 						addCount = function(id) {
 							//alert($("#Count").val());
 							//alert(id.substr(3));
-							//console.log(id);
+							console.log(id);
 							$("#Count" + id.substr(3)).val(parseInt($("#Count" + id.substr(3)).val()) + 1);
 						}
 
@@ -77,7 +77,7 @@
 							var list_arry = [];
 							console.log(arry);
 							list["tableNo"] = $("#tableNo").val();
-							list["storeNo"] = $()
+							list["storeNo"] = "${storeNo}";
 							for (var i = 0; i < arry.length; i++) {
 								var obj = {};
 								if (arry[i].value != 0) {

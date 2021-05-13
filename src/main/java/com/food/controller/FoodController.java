@@ -43,7 +43,7 @@ public class FoodController {
 	@RequestMapping(value = "foodList",method = RequestMethod.GET)
 	public String foodList(HttpServletRequest request) {
 		List<Food> pic = this.foodService.findPic();
-		//System.out.println(pic);
+		System.out.println(pic);
 		request.setAttribute("img", pic);
 		String storeNo = request.getParameter("storeNo");
 		String tableNo = request.getParameter("tableNo");
@@ -86,14 +86,14 @@ public class FoodController {
 		return json_list;
 	}
 
-	@RequestMapping("a2")
-	public String a2() {
-		return "a2";
+	@RequestMapping("addFood")
+	public String addFood() {
+		return "addFood";
 	}
 
-	@RequestMapping("a3")
-	public String a3() {
-		return "a3";
+	@RequestMapping("orderInfo")
+	public String orderInfo() {
+		return "orderInfo";
 	}
 	
 	@RequestMapping("orderDetail")
@@ -119,11 +119,11 @@ public class FoodController {
 		if(order.size() != 0) {
 			for(int i = 0 ; i < order.size() ; i ++) {
 				JSONObject jo = new JSONObject();
-				jo.put("store_no", order.get(i).getStoreNo());
-				jo.put("table_no", order.get(i).getTableNo());
+				jo.put("storeNo", order.get(i).getStoreNo());
+				jo.put("tableNo", order.get(i).getTableNo());
 				jo.put("status", order.get(i).getStatus());
-				jo.put("order_no", order.get(i).getOrderNo());
-				jo.put("create_time", order.get(i).getCreateTime());
+				jo.put("orderNo", order.get(i).getOrderNo());
+				jo.put("createTime", order.get(i).getCreateTime());
 				jsonArray.add(jo);
 			}
 		}
@@ -147,9 +147,10 @@ public class FoodController {
 		if(order.size() != 0) {
 			for(int i = 0 ; i < order.size() ; i ++) {
 				JSONObject jo = new JSONObject();
-				jo.put("store_no", order.get(i).getStoreNo());
-				jo.put("order_no", order.get(i).getOrderNo());
-				jo.put("item_no", order.get(i).getItemNo());
+				jo.put("name", foodService.getItemName(order.get(i).getItemNo()));
+				jo.put("storeNo", order.get(i).getStoreNo());
+				jo.put("orderNo", order.get(i).getOrderNo());
+				jo.put("itemNo", order.get(i).getItemNo());
 				jo.put("amount", order.get(i).getAmount());
 				jo.put("qty", order.get(i).getQty());
 				jsonArray.add(jo);

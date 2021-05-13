@@ -39,11 +39,11 @@ public class OrderItems {
 		this.sellPrice = sellPrice;
 	}
 
-	public int getItemNo() {
+	public String getItemNo() {
 		return itemNo;
 	}
 
-	public void setItemNo(int itemNo) {
+	public void setItemNo(String itemNo) {
 		this.itemNo = itemNo;
 	}
 
@@ -65,7 +65,7 @@ public class OrderItems {
 
 	private BigInteger orderNo;
 	private String sellPrice;
-	private int itemNo;
+	private String itemNo;
 	private BigDecimal amount;
 	private int qty;
 }

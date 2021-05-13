@@ -64,10 +64,10 @@
 								<a id="b1" href="javascript:;" onclick="changeFrame(this.id)">列表一</a>
 							</dd>
 							<dd>
-								<a id="a2" href="javascript:;" onclick="changeFrame(this.id)">列表二</a>
+								<a id="addFood" href="javascript:;" onclick="changeFrame(this.id)">新增菜品</a>
 							</dd>
 							<dd>
-								<a id="a3" href="javascript:;" onclick="changeFrame(this.id)">列表三</a>
+								<a id="orderInfo" href="javascript:;" onclick="changeFrame(this.id)">订单查询</a>
 							</dd>
 							<dd>
 								<a id="foodList" href="javascript:;" onclick="changeFrame(this.id)">超链接</a>

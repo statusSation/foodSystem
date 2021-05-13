@@ -21,4 +21,6 @@ public interface FoodService {
 	List<OrderItems> getOrderDetailList(String storeNo, String orderNo);
 
 	List<Table> showTableStatus(String storeNo);
+
+	String getItemName(String itemNo);
 }

@@ -12,17 +12,24 @@
 		<result column="pic" property="pic" />
 	</resultMap>
 
-	<select id="findPic" resultType="com.food.entiy.Food">
+	<select id="findPic" resultMap="findPic">
 		select
 		name,sell_price,pic,item_no
 		from food_detail
+	</select>
+	
+	<select id="getItemName" resultType="java.lang.String">
+		select
+		name
+		from food_detail
+		where item_no = #{itemNo}
 	</select>
 
 
 	<insert id="createOrder">
 
-		insert into food_orders(order_no,table_no,status)
-		values(#{ord_no},#{table_no},0)
+		insert into food_orders(order_no,table_no,store_no)
+		values(#{ordNo},#{tableNo},#{storeNo})
 
 	</insert>
 
@@ -30,7 +37,7 @@
 
 		insert into
 		food_order_items(store_no,order_no,sell_price,item_no,amount,qty)
-		values(#{store_no},#{ord_no},#{sell_price},#{item_no},#{amount},#{count})
+		values(#{storeNo},#{ordNo},#{sellPrice},#{itemNo},#{amount},#{count})
 	</insert>
 
 	<resultMap id="getOrderList" type="com.food.entiy.Orders">
@@ -41,7 +48,7 @@
 		<result column="create_time" property="createTime" />
 	</resultMap>
 
-	<select id="getOrderList" resultType="com.food.entiy.Orders">
+	<select id="getOrderList" resultMap="getOrderList">
 		select store_no,
 		order_no,
 		table_no,
@@ -55,6 +62,7 @@
 		and
 		date_format(create_time,'%Y-%m-%d') between #{beginDate} and
 		#{endDate}
+		order by id desc
 		limit #{page},#{limit}
 	</select>
 
@@ -78,8 +86,7 @@
 		<result column="qty" property="qty" />
 	</resultMap>
 
-	<select id="getOrderDetailList"
-		resultType="com.food.entiy.OrderItems">
+	<select id="getOrderDetailList" resultMap="getOrderDetailList">
 		select store_no,
 		order_no,
 		sell_price,
@@ -88,7 +95,8 @@
 		qty
 		from
 		food_order_items
-		where store_no = #{storeNo}
+		where
+		store_no = #{storeNo}
 		and order_no = #{orderNo}
 	</select>
 
@@ -98,7 +106,7 @@
 		<result column="table_no" property="tableNo" />
 	</resultMap>
 
-	<select id="showTableStatus" resultType="com.food.entiy.Table">
+	<select id="showTableStatus" resultMap="showTableStatus">
 		select store_no,
 		status,
 		table_no

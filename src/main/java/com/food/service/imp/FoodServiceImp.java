@@ -15,12 +15,16 @@ import com.food.entiy.Orders;
 import com.food.entiy.Table;
 import com.food.mapper.FoodMapper;
 import com.food.service.FoodService;
+import com.food.utils.RedisUtil;
 
 @Service
 public class FoodServiceImp implements FoodService {
 
 	@Autowired
 	public FoodMapper foodMapper;
+	
+	@Autowired
+	public RedisUtil redisUtil;
 
 	@Override
 	public List<Food> findPic() {
@@ -33,25 +37,35 @@ public class FoodServiceImp implements FoodService {
 	public String createOrder(JSONObject json_list) {
 		// TODO Auto-generated method stub
 		JSONArray arry = (JSONArray) json_list.get("data");
-		String work_date = new SimpleDateFormat("yyyyMMdd").format(new Date());
-		String ord_no = work_date + System.currentTimeMillis();
-		// System.out.println("生成的订单号=" + ord_no);
-		// this.foodMapper.createOrder(ord_no);
-		String table_no = json_list.getString("table_no");
+		String workDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
+		String ordNo = workDate + System.currentTimeMillis();
+		// System.out.println("生成的订单号=" + ordNo);
+		// this.foodMapper.createOrder(ordNo);
+		if(redisUtil.hasKey("orderNo")) {
+			if(redisUtil.getExpire("orderNo")) {
+				System.out.println("获取前:"+redisUtil.get("orderNo"));
+				redisUtil.incr("orderNo", 1);
+				
+				System.out.println("更新后:"+redisUtil.get("orderNo"));
+			}
+		}
+		redisUtil.set("orderNo",ordNo);
+		String tableNo = json_list.getString("tableNo");
+		String storeNo = json_list.getString("storeNo");
+		System.out.println("店号:"+storeNo);
 		try {
 			// System.out.println("service=" + json_list);
 			// System.out.println("service=" + arry);
-			this.foodMapper.createOrder(ord_no, table_no);
+			this.foodMapper.createOrder(ordNo, tableNo, storeNo);
 			for (int i = 0; i < arry.size(); i++) {
 				JSONObject tmp = new JSONObject();
 				tmp = (JSONObject) arry.get(i);
-				// String store_no = tmp.getString("store_no");
-				String store_no = "1";
-				String item_no = tmp.getString("item_no");
+				// String storeNo = tmp.getString("storeNo");
+				String itemNo = tmp.getString("itemNo");
 				int count = tmp.getIntValue("count");
-				float sell_price = tmp.getFloat("sell_price");
-				float amount = count * sell_price;
-				boolean flag = this.foodMapper.createOrderItems(store_no, ord_no, item_no, count, sell_price, amount);
+				float sellPrice = tmp.getFloat("sellPrice");
+				float amount = count * sellPrice;
+				boolean flag = this.foodMapper.createOrderItems(storeNo, ordNo, itemNo, count, sellPrice, amount);
 				System.out.println("插入=" + flag);
 			}
 		} catch (Exception e) {
@@ -79,7 +93,7 @@ public class FoodServiceImp implements FoodService {
 	@Override
 	public List<OrderItems> getOrderDetailList(String storeNo, String orderNo) {
 		// TODO Auto-generated method stub
-		List<OrderItems> order = this.foodMapper.getOrderDetailList(storeNo,orderNo);
+		List<OrderItems> order = this.foodMapper.getOrderDetailList(storeNo, orderNo);
 		return order;
 	}
 
@@ -88,6 +102,12 @@ public class FoodServiceImp implements FoodService {
 		// TODO Auto-generated method stub
 		List<Table> table = this.foodMapper.showTableStatus(storeNo);
 		return table;
+	}
+
+	@Override
+	public String getItemName(String itemNo) {
+		// TODO Auto-generated method stub
+		return this.foodMapper.getItemName(itemNo);
 	}
 
 }

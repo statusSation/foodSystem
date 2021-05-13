@@ -10,7 +10,7 @@
 		<appender-ref ref="STDOUT" />
 	</root>
 
-	<logger name="com.food..mapper" level="DEBUG" additivity="false">
+	<logger name="com.food.mapper" level="DEBUG" additivity="false">
 		<appender-ref ref="STDOUT" />
 	</logger>
 	

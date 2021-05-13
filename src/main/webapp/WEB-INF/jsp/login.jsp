@@ -37,19 +37,15 @@
 						var element = layui.element, $ = layui.jquery, layer = layui.layer, form = layui.form;
 
 						login = function() {
-							var storeNo = $("#storeNo").val();
-							var usrId = $("#usrId").val();
-							var password = $("#password").val();
+							var data = {"storeNo":$("#storeNo").val(),"usrId":$("#usrId").val(),"password":$("#password").val()};
 							$.ajax({
 								type : 'post',
 								url : '/login/loginUsr',
-								data : {
-									'storeNo' : storeNo,
-									'usrId' : usrId,
-									'password' : password
-								},
+								contentType : 'application/json',
+								dataType : 'json',
+								data: JSON.stringify(data),
 								success : function(result) {
-									//console.log(result);
+									console.log(result);
 									if (result == 1) {
 										layer.msg("登录成功");
 										window.location.href = "main";

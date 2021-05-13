@@ -64,47 +64,43 @@
 			</div>
 		</form>
 		<div class="layui-inline ml_xl">
-			<button class="layui-btn" id="recive" onclick="collection()">收款</button>
+			<button class="layui-btn" type=button id="recive" onclick="collection()">收款</button>
 		</div>
 		<div class="layui-inline ml_xl">
-			<button class="layui-btn" id="download" onclick="download()">下载</button>
+			<button class="layui-btn" type=button id="download" onclick="download()">下载</button>
 		</div>
 	</div>
 	<div class="pager-table">
-		<table class="layui-hide layui-table-radius" id="table1"></table>
+		<table class="layui-hide layui-table-radius" id="table1" lay-filter="table1"></table>
 	</div>
 	<div id="demoDetailDiv1" style="display: none; padding: 10px;">
-		<div id="detailDiv1"></div>
+		<div id="detailDiv1">
+		</div>
 	</div>
-<canvas id="myCanvas" width="3000" height="1500" style="border:1px solid #d3d3d3;">
-Your browser does not support the HTML5 canvas tag.
-</canvas>
 </body>
 
 <script id="detail" type="text/html">
-	<a lay-event="detail">详情</a>
+	<button lay-event="orderDetail">详情</button>
     
 </script>
 
 <script id="orderDetail" type="text/html">
-		<table class="layui-table" id="table2" lay-filter="tabl2">
+<table class="layui-table" id="table2" lay-filter="tabl2">
             <thead>
                 <tr>
-                    <th>期初金额</th>
-                    <th>已领用金额</th>
-                    <th>已退货金额</th>
-                    <th>备用金总金额</th>
-                    <th>盘点金额</th>
+                    <th>菜名</th>
+                    <th>货号</th>
+                    <th>价格</th>
+                    <th>数量</th>
                 </tr>
             </thead>
             <tbody>
-                {{# layui.each(d,function(index,r){ }}
+                {{# layui.each(d.data,function(index,r){ }}
                 <tr>
-                    <td>{{r.stockAmnt}}</td>
-                    <td>{{r.billAmnt}}</td>
-                    <td>{{r.rtnPosAmnt}}</td>
-                    <td>{{r.totalAmnt}}</td>
-                    <td>{{r.invAmnt}}</td>
+                    <td>{{r.name}}</td>
+                    <td>{{r.itemNo}}</td>
+                    <td>{{r.amount}}</td>
+                    <td>{{r.qty}}</td>
                 </tr>
                 {{# }); }}
             </tbody>
@@ -116,10 +112,13 @@ Your browser does not support the HTML5 canvas tag.
 </script>
 
 <script type="text/javascript">
-layui.use(['form', 'table', 'laydate','layer','laytpl'], () => {
+layui.config({
+    base:'/layui/js/'
+});
+layui.use(['form', 'table', 'laydate','layer','laytpl','getTime'], () => {
 	
 	var form = layui.form, $ = layui.jquery, layer = layui.layer, table = layui.table, 
-	laydate = layui.laydate, laytpl = layui.laytpl;
+	laydate = layui.laydate, laytpl = layui.laytpl, getTime = layui.getTime;
 	
 	//var now = getNow();
 	//shuiyin.watermark({"watermark_txt":"A B C X Y Z "+now});
@@ -130,11 +129,11 @@ layui.use(['form', 'table', 'laydate','layer','laytpl'], () => {
 		data: [],
 		cols: [
 			[
-				{field: 'store_no',title: '店别',align: 'center'},
-				{field: 'table_no',title: '桌号',align: 'center'},
-				{field: 'order_no',title: '订单号',align: 'center'},
+				{field: 'storeNo',title: '店别',align: 'center'},
+				{field: 'tableNo',title: '桌号',align: 'center'},
+				{field: 'orderNo',title: '订单号',align: 'center'},
 				{field: 'status',title: '状态',align: 'center'},
-				{field: 'create_time',title: '生成时间',align: 'center'},
+				{field: 'createTime',title: '生成时间',align: 'center'},
 				{field: 'flag',title: '操作',align: 'center',templet: '#detail'}
 			]
 		],
@@ -143,6 +142,7 @@ layui.use(['form', 'table', 'laydate','layer','laytpl'], () => {
 		limit: 20
 	});
 	
+	/*
 	var can = document.createElement('canvas');
 	var body = document.body;
 	body.appendChild(can);
@@ -155,16 +155,12 @@ layui.use(['form', 'table', 'laydate','layer','laytpl'], () => {
 	cans.font = "16px Microsoft JhengHei";
 	cans.fillText("阿斯顿发送到!",can.width/3,can.height/1);
 	body.style.backgroundImage="url("+can.toDataURL("image/png")+")";
-	
-    var now = new Date();
-    var last = new Date(now);
-    last.setDate(now.getDate() - 30);
-    //console.log(date2.getFullYear() + "-" + (date2.getMonth() + 1) + "-" + date2.getDate() + "-"+ date2.getDay());
+	*/
 	
 	var startDate1 = laydate.render({
 		elem: '#beginDate',
 		type: 'date',
-		value: last.getFullYear() + "-" + (last.getMonth() + 1) + "-" + last.getDate(),
+		value: getTime.getRecentDay(-30),
 		done: function(value, date, endDate) {
 			
 		}
@@ -172,7 +168,7 @@ layui.use(['form', 'table', 'laydate','layer','laytpl'], () => {
 	var endDate1 = laydate.render({
 		elem: '#endDate',
 		type: 'date',
-		value: new Date(),
+		value: getTime.getRecentDay(0),
 		done: function(value, date, endDate) {
 			
 		}
@@ -180,9 +176,8 @@ layui.use(['form', 'table', 'laydate','layer','laytpl'], () => {
 	
 	table.on('tool(table1)', function (obj) {
 		var data = obj.data;
-		console.log(data);z
-		if(obj.event === 'detail'){
-			console.log(123);
+		console.log(data);
+		if(obj.event === 'orderDetail'){
         	index = layer.open({
                 title: '详情',
                 type: 1,
@@ -193,22 +188,18 @@ layui.use(['form', 'table', 'laydate','layer','laytpl'], () => {
                 }
             });
         	//obj.data是可以更换的
-            var demoDetailTpl = detail.innerHTML, //获取模板，
+            var demoDetailTpl = orderDetail.innerHTML, //获取模板，
               detailDiv = document.getElementById('detailDiv1');  //视图
               $.ajax({
             	  type: 'post',
 					url: '/food/orderDetailList',
 					data: {
-						"storeNo" : data.store_no,
-						"orderNo" : data.order_no
+						"storeNo" : data.storeNo,
+						"orderNo" : data.orderNo
 					},
 					success : function(result) {
 						console.log(result);
-						var json = [];
-						var body = result.body;
-						json.push(body);
-						laytpl(demoDetailTpl).render(json, function (html) { //渲染视图
-							  tableData2 = json;
+						laytpl(demoDetailTpl).render(result, function (html) { //渲染视图
 							//console.log(tableData2);
 			                  detailDiv.innerHTML = html;
 			            });
@@ -247,6 +238,10 @@ layui.use(['form', 'table', 'laydate','layer','laytpl'], () => {
 			    
 			  }
 		});
+	}
+	
+	closeButton = function(){
+		layer.closeAll();
 	}
 	
 })

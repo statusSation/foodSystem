@@ -13,10 +13,10 @@ public interface FoodMapper {
 
 	List<Food> findPic();
 
-	void createOrder(@Param("ord_no") String ord_no, @Param("table_no") String table_no);
+	void createOrder(@Param("ordNo") String ordNo, @Param("tableNo") String tableNo, @Param("storeNo") String storeNo);
 
-	boolean createOrderItems(@Param("store_no") String store_no, @Param("ord_no") String ord_no,
-			@Param("item_no") String item_no, @Param("count") int count, @Param("sell_price") float sell_price,
+	boolean createOrderItems(@Param("storeNo") String storeNo, @Param("ordNo") String ordNo,
+			@Param("itemNo") String itemNo, @Param("count") int count, @Param("sellPrice") float sellPrice,
 			@Param("amount") float amount);
 
 	List<Orders> getOrderList(@Param("storeNo") String storeNo, @Param("beginDate") String beginDate,
@@ -28,5 +28,7 @@ public interface FoodMapper {
 	List<OrderItems> getOrderDetailList(@Param("storeNo") String storeNo, @Param("orderNo") String orderNo);
 
 	List<Table> showTableStatus(@Param("storeNo") String storeNo);
+
+	String getItemName(@Param("itemNo") String itemNo);
 
 }

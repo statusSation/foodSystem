@@ -7,8 +7,8 @@
 	<select id="getUsr" resultType="java.lang.String">
 		select count(*)
 		from food_user
-		where store_no = #{store_no}
-		and usr_id = #{usr_id}
+		where store_no = #{storeNo}
+		and usr_id = #{usrId}
 		and password = #{password}
 	</select>
 
