@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,35 +14,35 @@ import com.alibaba.fastjson.JSONObject;
 import com.food.entiy.Food;
 import com.food.entiy.OrderItems;
 import com.food.entiy.Orders;
+import com.food.entiy.ResponeBody;
 import com.food.entiy.Table;
-import com.food.mapper.FoodMapper;
-import com.food.service.FoodService;
+import com.food.mapper.FoodOrderMapper;
+import com.food.service.FoodOrderService;
 import com.food.utils.RedisUtil;
 
 @Service
-public class FoodServiceImp implements FoodService {
+public class FoodOrderServiceImp implements FoodOrderService {
+	
+	private static final Logger logger = LoggerFactory.getLogger(FoodOrderServiceImp.class);
 
 	@Autowired
-	public FoodMapper foodMapper;
+	public FoodOrderMapper foodOrderMapper;
 	
 	@Autowired
 	public RedisUtil redisUtil;
 
 	@Override
 	public List<Food> findPic() {
-		// TODO Auto-generated method stub
-		List<Food> pic = this.foodMapper.findPic();
+		List<Food> pic = this.foodOrderMapper.findPic();
 		return pic;
 	}
 
 	@Override
-	public String createOrder(JSONObject json_list) {
-		// TODO Auto-generated method stub
-		JSONArray arry = (JSONArray) json_list.get("data");
+	public ResponeBody<JSONObject> createOrder(String storeNo,String tableNo,JSONArray detail) {
+		ResponeBody<JSONObject> responeBody = new ResponeBody<JSONObject>();
 		String workDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-		String ordNo = workDate + System.currentTimeMillis();
-		// System.out.println("生成的订单号=" + ordNo);
-		// this.foodMapper.createOrder(ordNo);
+		String ordNo = workDate + storeNo +System.currentTimeMillis();
+		/*
 		if(redisUtil.hasKey("orderNo")) {
 			if(redisUtil.getExpire("orderNo")) {
 				System.out.println("获取前:"+redisUtil.get("orderNo"));
@@ -50,64 +52,65 @@ public class FoodServiceImp implements FoodService {
 			}
 		}
 		redisUtil.set("orderNo",ordNo);
-		String tableNo = json_list.getString("tableNo");
-		String storeNo = json_list.getString("storeNo");
-		System.out.println("店号:"+storeNo);
+		* */
 		try {
-			// System.out.println("service=" + json_list);
-			// System.out.println("service=" + arry);
-			this.foodMapper.createOrder(ordNo, tableNo, storeNo);
-			for (int i = 0; i < arry.size(); i++) {
-				JSONObject tmp = new JSONObject();
-				tmp = (JSONObject) arry.get(i);
-				// String storeNo = tmp.getString("storeNo");
-				String itemNo = tmp.getString("itemNo");
-				int count = tmp.getIntValue("count");
-				float sellPrice = tmp.getFloat("sellPrice");
-				float amount = count * sellPrice;
-				boolean flag = this.foodMapper.createOrderItems(storeNo, ordNo, itemNo, count, sellPrice, amount);
-				System.out.println("插入=" + flag);
+			this.foodOrderMapper.createOrder(ordNo, tableNo, storeNo);
+			for (int i = 0; i < detail.size(); i++) {
+				JSONObject tmpVal = new JSONObject();
+				tmpVal = (JSONObject) detail.get(i);
+				String itemNo = tmpVal.getString("itemNo");
+				int count = tmpVal.getIntValue("count");
+				Double sellPrice = tmpVal.getDouble("sellPrice");
+				Double amount = count * sellPrice;
+				this.foodOrderMapper.createOrderItems(storeNo, ordNo, itemNo, count, sellPrice, amount);
 			}
+			return responeBody;
+			
 		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
+			responeBody.setCode(2001);
+			responeBody.setMsg("createOrder(2001)异常:"+e.getLocalizedMessage());
+			logger.info(responeBody.getMsg());
+			return responeBody;
 		}
-		return null;
 	}
 
 	@Override
-	public List<Orders> getOrderList(String storeNo, String beginDate, String endDate, int page, int limit) {
-		// TODO Auto-generated method stub
-		List<Orders> order = this.foodMapper.getOrderList(storeNo, beginDate, endDate, page, limit);
-		System.out.println(order);
-		return order;
-	}
-
-	@Override
-	public int getOrderListCount(String storeNo, String beginDate, String endDate) {
-		// TODO Auto-generated method stub
-		int count = this.foodMapper.getOrderListCount(storeNo, beginDate, endDate);
-		return count;
+	public ResponeBody<JSONObject> getOrderList(String storeNo, String beginDate, String endDate, int page, int limit) {
+		ResponeBody<JSONObject> responeBody = new ResponeBody<JSONObject>();
+		try {
+		List<Orders> order = this.foodOrderMapper.getOrderList(storeNo, beginDate, endDate, page, limit);
+		int count = this.foodOrderMapper.getOrderListCount(storeNo, beginDate, endDate);
+		JSONObject jobj = new JSONObject();
+		jobj.put("data", order);
+		jobj.put("count", count);
+		responeBody.setBody(jobj);
+		return responeBody;
+		} catch (Exception e) {
+			responeBody.setCode(2002);
+			responeBody.setMsg("getOrderList(2002)异常:"+e.getLocalizedMessage());
+			logger.info(responeBody.getMsg());
+			return responeBody;
+		}
 	}
 
 	@Override
 	public List<OrderItems> getOrderDetailList(String storeNo, String orderNo) {
 		// TODO Auto-generated method stub
-		List<OrderItems> order = this.foodMapper.getOrderDetailList(storeNo, orderNo);
+		List<OrderItems> order = this.foodOrderMapper.getOrderDetailList(storeNo, orderNo);
 		return order;
 	}
 
 	@Override
 	public List<Table> showTableStatus(String storeNo) {
 		// TODO Auto-generated method stub
-		List<Table> table = this.foodMapper.showTableStatus(storeNo);
+		List<Table> table = this.foodOrderMapper.showTableStatus(storeNo);
 		return table;
 	}
 
 	@Override
 	public String getItemName(String itemNo) {
 		// TODO Auto-generated method stub
-		return this.foodMapper.getItemName(itemNo);
+		return this.foodOrderMapper.getItemName(itemNo);
 	}
 
 }

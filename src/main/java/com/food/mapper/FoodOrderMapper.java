@@ -9,15 +9,15 @@ import com.food.entiy.OrderItems;
 import com.food.entiy.Orders;
 import com.food.entiy.Table;
 
-public interface FoodMapper {
+public interface FoodOrderMapper {
 
 	List<Food> findPic();
 
-	void createOrder(@Param("ordNo") String ordNo, @Param("tableNo") String tableNo, @Param("storeNo") String storeNo);
+	boolean createOrder(@Param("ordNo") String ordNo, @Param("tableNo") String tableNo, @Param("storeNo") String storeNo);
 
 	boolean createOrderItems(@Param("storeNo") String storeNo, @Param("ordNo") String ordNo,
-			@Param("itemNo") String itemNo, @Param("count") int count, @Param("sellPrice") float sellPrice,
-			@Param("amount") float amount);
+			@Param("itemNo") String itemNo, @Param("count") int count, @Param("sellPrice") Double sellPrice,
+			@Param("amount") Double amount);
 
 	List<Orders> getOrderList(@Param("storeNo") String storeNo, @Param("beginDate") String beginDate,
 			@Param("endDate") String endDate, @Param("page") int page, @Param("limit") int limit);

@@ -5,20 +5,19 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSONObject;
 import com.food.entiy.ResponeBody;
 import com.food.entiy.User;
 import com.food.service.FoodLoginService;
 
-@Controller
-//@RestController
-@RequestMapping(value = "/login")
+//@Controller
+@RestController
+@RequestMapping(value = "/api/login")
 public class FoodLoginController {
 
 	private static final Logger logger = LoggerFactory.getLogger(FoodLoginController.class);
@@ -26,20 +25,9 @@ public class FoodLoginController {
 	@Autowired
 	private FoodLoginService foodLoginService;
 
-	@RequestMapping("index")
-	public String index() {
-		// log.info("111");
-		return "login";
-	}
-
-	@RequestMapping("main")
-	public String main() {
-		return "redirect:/food/index";
-	}
-
 	@RequestMapping(value = "/loginUsr", method = { RequestMethod.POST })
-	@ResponseBody
 	public ResponeBody<User> loginUsr(HttpServletRequest request,@RequestBody JSONObject data) {
+		logger.info("loginUsr接收参数:"+data);
 		ResponeBody<User> responeBody = new ResponeBody<User>();
 		String storeNo = data.getString("storeNo");
 		String usrId = data.getString("usrId");
