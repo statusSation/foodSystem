@@ -84,6 +84,7 @@
 		<result column="item_no" property="itemNo" />
 		<result column="amount" property="amount" />
 		<result column="qty" property="qty" />
+		<result column="name" property="name" />
 	</resultMap>
 
 	<select id="getOrderDetailList" resultMap="getOrderDetailList">

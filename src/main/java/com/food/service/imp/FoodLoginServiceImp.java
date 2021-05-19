@@ -14,7 +14,6 @@ public class FoodLoginServiceImp implements FoodLoginService{
 	
 	@Override
 	public String getUsr(String store_no, String usr_id, String password) {
-		// TODO Auto-generated method stub
 		String flag = this.foodLoginMapper.getUsr(store_no,usr_id,password);
 		return flag;
 	}

@@ -14,6 +14,15 @@ public class OrderItems {
 	 * comment '修改时间',
 	 */
 	private String storeNo;
+	private String name;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public String getStoreNo() {
 		return storeNo;

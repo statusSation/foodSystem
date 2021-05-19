@@ -22,12 +22,12 @@ import com.food.utils.RedisUtil;
 
 @Service
 public class FoodOrderServiceImp implements FoodOrderService {
-	
+
 	private static final Logger logger = LoggerFactory.getLogger(FoodOrderServiceImp.class);
 
 	@Autowired
 	public FoodOrderMapper foodOrderMapper;
-	
+
 	@Autowired
 	public RedisUtil redisUtil;
 
@@ -38,21 +38,18 @@ public class FoodOrderServiceImp implements FoodOrderService {
 	}
 
 	@Override
-	public ResponeBody<JSONObject> createOrder(String storeNo,String tableNo,JSONArray detail) {
+	public ResponeBody<JSONObject> createOrder(String storeNo, String tableNo, JSONArray detail) {
 		ResponeBody<JSONObject> responeBody = new ResponeBody<JSONObject>();
 		String workDate = new SimpleDateFormat("yyyyMMdd").format(new Date());
-		String ordNo = workDate + storeNo +System.currentTimeMillis();
+		String ordNo = workDate + storeNo + System.currentTimeMillis();
 		/*
-		if(redisUtil.hasKey("orderNo")) {
-			if(redisUtil.getExpire("orderNo")) {
-				System.out.println("获取前:"+redisUtil.get("orderNo"));
-				redisUtil.incr("orderNo", 1);
-				
-				System.out.println("更新后:"+redisUtil.get("orderNo"));
-			}
-		}
-		redisUtil.set("orderNo",ordNo);
-		* */
+		 * if(redisUtil.hasKey("orderNo")) { if(redisUtil.getExpire("orderNo")) {
+		 * System.out.println("获取前:"+redisUtil.get("orderNo"));
+		 * redisUtil.incr("orderNo", 1);
+		 * 
+		 * System.out.println("更新后:"+redisUtil.get("orderNo")); } }
+		 * redisUtil.set("orderNo",ordNo);
+		 */
 		try {
 			this.foodOrderMapper.createOrder(ordNo, tableNo, storeNo);
 			for (int i = 0; i < detail.size(); i++) {
@@ -65,10 +62,10 @@ public class FoodOrderServiceImp implements FoodOrderService {
 				this.foodOrderMapper.createOrderItems(storeNo, ordNo, itemNo, count, sellPrice, amount);
 			}
 			return responeBody;
-			
+
 		} catch (Exception e) {
 			responeBody.setCode(2001);
-			responeBody.setMsg("createOrder(2001)异常:"+e.getLocalizedMessage());
+			responeBody.setMsg("createOrder(2001)异常:" + e.getLocalizedMessage());
 			logger.info(responeBody.getMsg());
 			return responeBody;
 		}
@@ -78,26 +75,39 @@ public class FoodOrderServiceImp implements FoodOrderService {
 	public ResponeBody<JSONObject> getOrderList(String storeNo, String beginDate, String endDate, int page, int limit) {
 		ResponeBody<JSONObject> responeBody = new ResponeBody<JSONObject>();
 		try {
-		List<Orders> order = this.foodOrderMapper.getOrderList(storeNo, beginDate, endDate, page, limit);
-		int count = this.foodOrderMapper.getOrderListCount(storeNo, beginDate, endDate);
-		JSONObject jobj = new JSONObject();
-		jobj.put("data", order);
-		jobj.put("count", count);
-		responeBody.setBody(jobj);
-		return responeBody;
+			List<Orders> order = this.foodOrderMapper.getOrderList(storeNo, beginDate, endDate, page, limit);
+			int count = this.foodOrderMapper.getOrderListCount(storeNo, beginDate, endDate);
+			JSONObject jobj = new JSONObject();
+			jobj.put("data", order);
+			jobj.put("count", count);
+			responeBody.setBody(jobj);
+			return responeBody;
 		} catch (Exception e) {
 			responeBody.setCode(2002);
-			responeBody.setMsg("getOrderList(2002)异常:"+e.getLocalizedMessage());
+			responeBody.setMsg("getOrderList(2002)异常:" + e.getLocalizedMessage());
 			logger.info(responeBody.getMsg());
 			return responeBody;
 		}
 	}
 
 	@Override
-	public List<OrderItems> getOrderDetailList(String storeNo, String orderNo) {
-		// TODO Auto-generated method stub
-		List<OrderItems> order = this.foodOrderMapper.getOrderDetailList(storeNo, orderNo);
-		return order;
+	public ResponeBody<JSONObject> getOrderDetailList(String storeNo, String orderNo) {
+		ResponeBody<JSONObject> responeBody = new ResponeBody<JSONObject>();
+		try {
+			JSONObject jobj = new JSONObject();
+			List<OrderItems> order = this.foodOrderMapper.getOrderDetailList(storeNo, orderNo);
+			for (int i = 0; i < order.size(); i++) {
+				order.get(i).setName(foodOrderMapper.getItemName(order.get(i).getItemNo()));
+			}
+			jobj.put("data", order);
+			responeBody.setBody(jobj);
+			return responeBody;
+		} catch (Exception e) {
+			responeBody.setCode(2003);
+			responeBody.setMsg("getOrderDetailList(2003)异常:" + e.getLocalizedMessage());
+			logger.info(responeBody.getMsg());
+			return responeBody;
+		}
 	}
 
 	@Override
