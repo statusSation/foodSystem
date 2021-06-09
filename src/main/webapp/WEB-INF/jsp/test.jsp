@@ -49,7 +49,7 @@
 							<a href="">安全设置</a>
 						</dd>
 					</dl></li>
-				<li class="layui-nav-item"><a href="">退了</a></li>
+				<li class="layui-nav-item"><a href="javascript:;" onclick="loginOut()">退出</a></li>
 			</ul>
 		</div>
 
@@ -76,10 +76,10 @@
 					<li class="layui-nav-item"><a href="javascript:;">解决方案</a>
 						<dl class="layui-nav-child">
 							<dd>
-								<a id="b1" href="javascript:;" onclick="changeFrame(this.id)">列表一</a>
+								<a id="main" href="javascript:;" onclick="changeFrame(this.id)">列表一</a>
 							</dd>
 							<dd>
-								<a id="b2" href="javascript:;" onclick="changeFrame(this.id)">列表二</a>
+								<a id="sss1" href="javascript:;" onclick="changeFrame(this.id)">列表二</a>
 							</dd>
 							<dd>
 								<a href="">超链接</a>
@@ -110,6 +110,11 @@
 			changeFrame = function(a){
 				$("#iframeMain").attr("src",a);
 			}
+			
+			loginOut = function(){
+				
+			}
+			
 		});
 	</script>
 </body>

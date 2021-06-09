@@ -35,20 +35,23 @@
 <script type="text/javascript">
 	layui.use([ 'element', 'form', 'layer' ],function() {
 						var element = layui.element, $ = layui.jquery, layer = layui.layer, form = layui.form;
+						var socket;
 
 						login = function() {
 							var data = {"storeNo":$("#storeNo").val(),"usrId":$("#usrId").val(),"password":$("#password").val()};
 							$.ajax({
-								type : 'post',
-								url : '/login/loginUsr',
-								contentType : 'application/json',
-								dataType : 'json',
-								data: JSON.stringify(data),
+								type : 'GET',
+								url : '/api/login/loginUsr',
+								data: {
+									"storeNo" : $("#storeNo").val(),
+									"usrId" : $("#usrId").val(),
+									"password" : $("#password").val()
+								},
 								success : function(result) {
 									//console.log(result);
 									if (result.code == 0) {
 										layer.msg("登录成功");
-										window.location.href = "main";
+										window.location.href = "test";
 									} else {
 										layer.msg("用户名或密码错误！");
 									}

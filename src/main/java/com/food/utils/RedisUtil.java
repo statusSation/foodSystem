@@ -1,14 +1,14 @@
 package com.food.utils;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * redisTemplate封装
@@ -92,7 +92,7 @@ public class RedisUtil {
 	 * @param key 键
 	 * @return 值
 	 */
-	public Object get(String key) {
+	public Object get(Object key) {
 		return key == null ? null : redisTemplate.opsForValue().get(key);
 	}
 
