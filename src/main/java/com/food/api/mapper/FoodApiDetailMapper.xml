@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.food.mapper.FoodApiDetailMapper">
+
+	<select id="getItemNo" resultType="java.lang.Integer">
+		select max(item_no)
+		from
+		food_detail
+	</select>
+	<insert id="insertPic">
+		insert into food_detail(name,item_no,sell_price,pic)
+		values(#{picName},#{itemNo},#{sellPrice},#{url})
+	</insert>
+	
+	<resultMap id="getItemDetailMap" type="com.food.entiy.Food">
+		<result column="item_no" property="itemNo" />
+		<result column="sell_price" property="sellPrice" />
+		<result column="name" property="name" />
+		<result column="pic" property="pic" />
+		<result column="status" property="status" />
+	</resultMap>
+	<select id="getItemDetail" resultMap="getItemDetailMap">
+		select item_no,sell_price,name,pic
+		from food_detail
+		where status = 1
+	</select>
+
+</mapper>
